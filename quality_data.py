@@ -2,15 +2,17 @@
 # 1. Load the data from quality dataset
 # download: `git clone https://github.com/nyu-mll/quality`
 # 2. Load and parse dataset
-
+# Read Json
+import json
+import os
+from utils import *
+import numpy as np
+import re
+import tiktoken
 
 gDataPath = './quality/data/v1.0.1/'
 gTrainPath = './quality/data/v1.0.1/QuALITY.v1.0.1.htmlstripped.train'
 gParsedDataPath = './parsed_data/v1.0.1/'
-
-# Read Json
-import json
-import os
 
 # Read Json
 def ReadLine(filename, line_id):
@@ -86,9 +88,51 @@ def ParseData():
 
 # Cut the data
 def CutData():
-    file_count = 
-    pass
+    file_count = 300
+    cutting_length = 400
+    overlapping = 50
+    encoding = tiktoken.get_encoding("cl100k_base")
+    embedding_converter = TextEmbedding()
+
+    for i in range(file_count):
+        # Read the article file
+        article_file = open(gParsedDataPath + 'article_' + str(i) + '.txt', 'r')
+        article = article_file.read()
+        
+        # Cut the article into chunks
+        article_chunk_filename = gParsedDataPath + 'article_' + str(i) + '_chunks.txt'
+        vector_chunk_filename = gParsedDataPath + 'article_' + str(i) + '_chunks.npy'
+        text_chunks = []
+        vector_chunks = []
+        chunk_begin = 0
+        
+        article_tokenized = encoding.encode(article)
+        article_chunk_file = open(article_chunk_filename, 'w')
+        
+        chunk_position = 0
+        while chunk_position < len(article_tokenized):
+            # Determine the chunk boundaries
+            chunk_end = min(chunk_position + cutting_length, len(article_tokenized))
+            chunk = article_tokenized[chunk_position:chunk_end]
+            chunk_position += cutting_length - overlapping
+            text_chunk = encoding.decode(chunk)
+            text_chunks.append(text_chunk)
+            article_chunk_file.write(repr(text_chunk))
+            article_chunk_file.write('\n')
+        
+        # Convert text chunks to vector chunks
+        vector_chunk = embedding_converter.convert_to_embedding(text_chunks)
+        print(vector_chunk)
+        print(vector_chunk.shape)
+        np.save(vector_chunk_filename, vector_chunk)
+        
+        # Close the files
+        article_file.close()
+        article_chunk_file.close()
+        
+        print('Cut', i, 'lines')
     
 if "__main__" == __name__:
     # ParseData()
+    CutData()
     print('Done')
