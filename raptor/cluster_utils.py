@@ -28,6 +28,8 @@ def global_cluster_embeddings(
 ) -> np.ndarray:
     if n_neighbors is None:
         n_neighbors = int((len(embeddings) - 1) ** 0.5)
+    if dim <= 1 or len(embeddings) <= 1:
+        return embeddings
     reduced_embeddings = umap.UMAP(
         n_neighbors=n_neighbors, n_components=dim, metric=metric
     ).fit_transform(embeddings)
@@ -69,7 +71,10 @@ def GMM_cluster(embeddings: np.ndarray, threshold: float, random_state: int = 0)
 def perform_clustering(
     embeddings: np.ndarray, dim: int, threshold: float, verbose: bool = False
 ) -> List[np.ndarray]:
-    reduced_embeddings_global = global_cluster_embeddings(embeddings, min(dim, len(embeddings) -2))
+    if len(embeddings) <= 2 or dim <= 2:
+        reduced_embeddings_global = embeddings
+    else:
+        reduced_embeddings_global = global_cluster_embeddings(embeddings, min(dim, len(embeddings) -2))
     global_clusters, n_global_clusters = GMM_cluster(
         reduced_embeddings_global, threshold
     )

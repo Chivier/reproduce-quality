@@ -6,8 +6,8 @@ import json
 
 class TextEmbedding:
     def __init__(self):
+        #self.model = SentenceTransformer('Alibaba-NLP/gte-large-en-v1.5')
         self.model = SentenceTransformer('Alibaba-NLP/gte-large-en-v1.5', trust_remote_code=True)
-    
     def convert_to_embedding(self, sentences):
         embeddings = self.model.encode(sentences)
         return embeddings
