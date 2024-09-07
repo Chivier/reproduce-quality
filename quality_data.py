@@ -89,8 +89,8 @@ def ParseData():
 # Cut the data
 def CutData():
     file_count = 300
-    cutting_length = 400
-    overlapping = 50
+    cutting_length = 2000
+    overlapping = 400
     encoding = tiktoken.get_encoding("cl100k_base")
     embedding_converter = TextEmbedding()
 
@@ -133,6 +133,6 @@ def CutData():
         print('Cut', i, 'lines')
     
 if "__main__" == __name__:
-    # ParseData()
+    ParseData()
     CutData()
     print('Done')

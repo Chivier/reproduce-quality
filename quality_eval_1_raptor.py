@@ -34,10 +34,8 @@ class Llama3_1_70b(BaseQAModel):
             logging.error(f"Error generating answer: {e}")
             return ""
         
-question_file_count = 30
-# question_position = "./parsed_data/v1.0.1"
-
-question_position = "./10percentquestions"
+question_file_count = 300
+question_position = "./parsed_data/quality_v1.0.1"
 
 
 common_heading = "You are a helpful assistant. You can help me by answering my questions.\n"

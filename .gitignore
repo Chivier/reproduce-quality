@@ -1,8 +1,9 @@
 quality
-parsed_data
+parsed_data/
 test.ipynb
 raptor-code/
 sample.txt
+datasets/
 
 # ---- Python ----
 # Byte-compiled / optimized / DLL files
