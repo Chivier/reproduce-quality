@@ -90,48 +90,41 @@ def encrypte_noun_text(text, spacy_model, uuid_map):
 
 def my_get_labelled_text(text, spacy_model, return_ents=True):
     """标签匿名化函数，输出标签匿名后的文本，可选是否返回对应的实体列表"""
-    label_set = ['CARDINAL','DATE', 'MONEY', 'PERSON','PERCENT', 'QUANTITY', 'TIME','GPE','LOC','ORDINAL',"PERSON","WORK_OF_ART","ORG","NORP","LAW","FAC","LANGUAGE"]
-    spacy_list = [(ent.start_char, ent.end_char, ent.label_) for ent in spacy_model(text).ents if ent.label_ in label_set]
+    doc = spacy_model(text)
+    spacy_list = [(token.idx, token.idx + len(token), token.pos_) for token in doc if token.pos_ in ['NOUN', 'PROPN']]
     spacy_list = merge_labeled_spans(spacy_list, text, return_positions=True)
     positions = np.array([ent[:2] for ent in spacy_list])
-    labels = [ent[2] for ent in spacy_list]
-    ner_list = {}
     for i in range(len(spacy_list)):
         s, e = positions[i]
         original_text = text[s:e]
-        unique_id = str(uuid.uuid4())
-        ner_list[unique_id] = original_text
+        if original_text in uuid_map.values():
+            unique_id = next(key for key, value in uuid_map.items() if value == original_text)
+        else:
+            unique_id = str(uuid.uuid4())
+            uuid_map[unique_id] = original_text
         text = text[:s] + f'<{unique_id}>' + text[e:]
         positions[i:,:] = positions[i:,:] + len(unique_id) + 2 - (e - s)
-    if return_ents:
-        return text, ner_list
-    else:
-        return text
+    return text
 
-def get_labelled_text_with_id(text, spacy_model, return_ents=True):
-    """标签匿名化函数并附加id，输出标签匿名后的文本，可选是否返回对应的实体列表"""
-    label_set = ['DATE', 'MONEY', 'PERCENT', 'QUANTITY', 'TIME','GPE','LOC',"PERSON","WORK_OF_ART","ORG","NORP","LAW","FAC","LANGUAGE"]
-    label_set = {k:{'<cur_id>': 0} for k in label_set}
-    spacy_list = [(ent.start_char, ent.end_char, ent.label_) for ent in spacy_model(text).ents if ent.label_ in label_set.keys()]
-    spacy_list = merge_labeled_spans(spacy_list, text, return_positions=True)
-    positions = np.array([ent[:2] for ent in spacy_list])
-    labels = [ent[2] for ent in spacy_list]
-    ner_list = set()
-    for i in range(len(spacy_list)):
-        s, e = positions[i]
-        ent_text = text[s:e]
-        label = labels[i]
-        if ent_text not in label_set[label]:
-            label_set[label][ent_text] = label_set[label]['<cur_id>']
-            label_set[label]['<cur_id>'] += 1
-        label = f'<{label}_{label_set[label][ent_text]}>'
-        ner_list.add(ent_text)
-        text = text[:s] + label + text[e:]
-        positions[i:,:] = positions[i:,:] + len(label) - (e - s)
-    if return_ents:
-        return text, list(ner_list)
-    else:
-        return text
+# def my_get_labelled_text(text, spacy_model, return_ents=True):
+#     """标签匿名化函数，输出标签匿名后的文本，可选是否返回对应的实体列表"""
+#     doc = spacy_model(text)
+#     spacy_list = [(token.idx, token.idx + len(token), token.pos_) for token in doc if token.pos_ in ['NOUN', 'PROPN']]
+#     spacy_list = merge_labeled_spans(spacy_list, text, return_positions=True)
+#     positions = np.array([ent[:2] for ent in spacy_list])
+#     labels = [ent[2] for ent in spacy_list]
+#     ner_list = {}
+#     for i in range(len(spacy_list)):
+#         s, e = positions[i]
+#         original_text = text[s:e]
+#         unique_id = str(uuid.uuid4())
+#         ner_list[unique_id] = original_text
+#         text = text[:s] + f'<{unique_id}>' + text[e:]
+#         positions[i:,:] = positions[i:,:] + len(unique_id) + 2 - (e - s)
+#     if return_ents:
+#         return text, ner_list
+#     else:
+#         return text
 
 class TextEmbedding:
     def __init__(self):
