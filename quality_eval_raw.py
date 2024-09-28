@@ -26,7 +26,7 @@ def qa_test():
     correct_count = 0
     
     # log_file : "eval_1_{datetime}.log"
-    log_filename = f"eval_1_{datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}.log"
+    log_filename = f"eval_raw_gpt4o_{datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}.log"
     
     for file_id in range(question_file_count):
         file_path = f"{question_position}/question_{file_id}.jsonl"
@@ -49,6 +49,10 @@ def qa_test():
                 if answer == correct_answer:
                     correct_count += 1
                 question_count += 1
+                
+                log_file = open(log_filename, "a")
+                log_file.write(f"Eval_answer: {answer}, Correct_answer: {correct_answer}\n")
+                log_file.close()
                         
     print(f"Correct count: {correct_count}/{question_count}")
     print(f"Score: {correct_count/question_count}")
