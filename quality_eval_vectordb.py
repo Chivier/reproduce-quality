@@ -75,6 +75,9 @@ def qa_test(client):
                 options = [option for option in options if option]
                 
                 selector = NerifMatchString(choices=options, model="gpt-4o")
+                # export OPENAI_PROXY_URL="https://localhost:11434/"
+                # export OPENAI_API_BASE="https://localhost:11434/v1/"
+                # selector = NerifMatchString(choices=options, model="ollama/llama3.1-70b-instruct")
                 answer = selector.match(question)
 
                 # ( convert question -> embedding )
