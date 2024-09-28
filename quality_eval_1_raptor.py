@@ -37,7 +37,6 @@ class Llama3_1_70b(BaseQAModel):
 question_file_count = 300
 question_position = "./parsed_data/quality_v1.0.1"
 
-
 common_heading = "You are a helpful assistant. You can help me by answering my questions.\n"
 common_prompt = "Give me the option that can answer this problem the best. Only give me the id of the best OPTION. If you cannot find the answer, give the option that you think is the best. ONLY RETURN THE ID!!!\n"
 
