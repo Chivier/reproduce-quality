@@ -17,4 +17,5 @@ torch==2.3.0.post100
 tqdm==4.66.4
 transformers==4.40.2
 umap==0.1.1
-nerif
+nerif==0.5.1
+qdrant-client==1.11.3
