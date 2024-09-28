@@ -28,10 +28,10 @@ def qa_test():
                 original_question = data["question"]
                 correct_answer = data["answer"]
                 # find question in <QUESTION></QUESTION>
-                question = data["question"].split("<QUESTION>")[1].split("</QUESTION>")[0]
+                question = original_question.split("<QUESTION>")[1].split("</QUESTION>")[0]
                 print(question)
                 # find options in <OPTIONS></OPTIONS>
-                options = question.split("<OPTIONS>")[1].split("</OPTIONS>")[0].split("\n")
+                options = original_question.split("<OPTIONS>")[1].split("</OPTIONS>")[0].split("\n")
                 # parse options by newline  
                 options = [option.strip() for option in options]
                 print(options)
