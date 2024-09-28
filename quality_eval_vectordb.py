@@ -55,7 +55,8 @@ def build_vectordb():
 def qa_test(client):
     question_count = 0
     correct_count = 0
-    
+    embedding_converter = TextEmbedding()
+
     # log_file : "eval_1_{datetime}.log"
     log_filename = f"eval_1_{datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}.log"
     
@@ -81,17 +82,18 @@ def qa_test(client):
                 answer = selector.match(question)
 
                 # ( convert question -> embedding )
-                # # convert question to embedding
-                # question_embedding = xxxx
-                # # 
+                # convert question to embedding
+                question_embedding = embedding_converter.convert_to_embedding(question)
+                # print(question)
+                # print(question_embedding)
                 # search_result = client.query_points(
                 #     collection_name="quality_rag",
                 #     query=question_embedding,
                 #     with_payload=True,
                 #     limit=3
                 # ).points
-
-                print(search_result)
+                
+                # print(search_result)
                 # article = 
                 # question_withrag = .... # add top k
                 # answer_withrag = selector.match(question_withrag)
@@ -105,4 +107,4 @@ def qa_test(client):
                 
 if "__main__" == __name__:
     client = build_vectordb()
-    qa_test(client)
+    # qa_test(client)
